@@ -1,0 +1,6 @@
+name: IDC Migration
+type: module
+description: 'Custom migration plugins supporting IDC ingest'
+core: 8.x
+dependencies:
+  - migrate
