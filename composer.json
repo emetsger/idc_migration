@@ -1,0 +1,37 @@
+{
+  "name": "jhu_idc/idc_migration",
+  "description": "Custom migration plugins for IDC",
+  "type": "drupal-module",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Elliot Metsger",
+      "role": "Developer",
+      "email": "emetsger@jhu.edu"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
+  "require": {
+    "php": ">=7.3",
+    "drupal/core": "^8.8.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "config": {
+    "platform": {
+      "php": "7.3.25"
+    }
+  },
+  "autoload": {
+    "classmap": [
+      "src/",
+      "vendor/"
+    ]
+  }
+}
