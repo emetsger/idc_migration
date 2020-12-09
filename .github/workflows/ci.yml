@@ -1,0 +1,17 @@
+name: Continuous Integration
+on: [ push, pull_request ]
+jobs:
+  tests:
+    name: Build test container and run unit tests
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build Docker Container
+        run: docker build -t testing .
+      - name: Install Composer Dependencies
+        run: docker run --volume $PWD:/app testing install
+      - name: Check Platform Requirements
+        run: docker run --volume $PWD:/app testing check-platform-reqs
+      - name: Run Unit Tests
+        run: docker run --volume $PWD:/app testing vendor/bin/phpunit tests
