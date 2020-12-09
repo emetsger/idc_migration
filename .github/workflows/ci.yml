@@ -7,11 +7,5 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build Docker Container
-        run: docker build -t testing .
-      - name: Install Composer Dependencies
-        run: docker run --volume $PWD:/app testing install
-      - name: Check Platform Requirements
-        run: docker run --volume $PWD:/app testing check-platform-reqs
       - name: Run Unit Tests
-        run: docker run --volume $PWD:/app testing vendor/bin/phpunit tests
+        run: make test
