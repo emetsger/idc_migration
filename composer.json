@@ -28,7 +28,7 @@
       "php": "7.3.25"
     }
   },
-  "autoload": {
+  "autoload-dev": {
     "classmap": [
       "src/",
       "vendor/"
