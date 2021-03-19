@@ -11,7 +11,7 @@ To depend on this module, add the following to `composer.json`:
 "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/jhu_idc/idc_migration"
+        "url": "https://github.com/jhu-idc/idc_migration"
     }
 ]
 ```
