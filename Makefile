@@ -27,6 +27,7 @@ build-image: .make/build-image
 	@sed -e 's/^TEST_IMAGE_TAG=.*/TEST_IMAGE_TAG=${GIT_TAG}/' < .env > /tmp/idc_migration.env
 	@mv /tmp/idc_migration.env ./.env
 	@echo "Built and tagged ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG}"
+	TEST_IMAGE_TAG=${GIT_TAG}
 
 .PHONY: push-image
 push-image: .make/push-image
