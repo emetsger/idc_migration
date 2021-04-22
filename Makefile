@@ -1,5 +1,5 @@
 DOCKER_REGISTRY=ghcr.io/jhu-sheridan-libraries/idc-isle-dc
-CONTAINER_NAME=idc_migration-testing
+IMAGE_NAME=idc_migration-testing
 GIT_TAG:=$(shell git describe --tags --always)
 
 .PHONY: help
@@ -17,44 +17,44 @@ help:
 build-image: .make/build-image
 
 .make/build-image:
-	docker build -t ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG} .
+	docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG} .
 	@touch .make/build-image
 
 .PHONY: push-image
 push-image: .make/push-image
 
 .make/push-image: .make/build-image
-	docker push ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG}
+	docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG}
 	@touch .make/push-image
 
 .PHONY: composer-update
 composer-update: .make/build-image .make/composer-update
 
 .make/composer-update:
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG} update
+	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG} update
 	@touch .make/composer-update
 
 .PHONY: composer-install
 composer-update: .make/build-image .make/composer-install
 
 .make/composer-install:
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG} install
+	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG} install
 	@touch .make/composer-install
 
 .PHONY: check-platform-reqs
 check-platform-reqs: .make/build-image .make/composer-update .make/check-platform-reqs
 
 .make/check-platform-reqs:
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG} check-platform-reqs
+	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG} check-platform-reqs
 	@touch .make/check-platform-reqs
 
 .PHONY: test
 test: .make/build-image .make/composer-install .make/check-platform-reqs
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG} vendor/bin/phpunit tests
+	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG} vendor/bin/phpunit tests
 
 .PHONY: clean
 clean:
-	-docker rmi ${DOCKER_REGISTRY}/${CONTAINER_NAME}:${GIT_TAG}
+	-docker rmi ${DOCKER_REGISTRY}/${IMAGE_NAME}:${GIT_TAG}
 	-rm -f .make/*
 	-rm -rf vendor/
 	-rm -f composer.lock
