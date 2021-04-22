@@ -9,6 +9,7 @@ help:
 	@echo "IDC Migration PHP module supported make targets are:"
 	@echo "  build-image: builds the Docker image used for tests, and updates the TEST_IMAGE_TAG in .env"
 	@echo "  push-image: pushes the Docker image to GHCR"
+	@echo "  pull-image: pulls the Docker image tagged in .env"
 	@echo "  composer-install: installs the dependencies in composer.lock"
 	@echo "  composer-update: updates the dependencies in composer.lock per composer.json version requirements"
 	@echo "  check-platform-reqs: insures the PHP version and installed extensions are runtime compatible"
@@ -34,29 +35,36 @@ push-image: .make/push-image
 	docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG}
 	@touch .make/push-image
 
+.PHONY: pull-image
+pull-image: .make/pull-image
+
+.make/pull-image:
+	docker pull ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG}
+	@touch .make/pull-image
+
 .PHONY: composer-update
-composer-update: .make/build-image .make/composer-update
+composer-update: .make/pull-image .make/composer-update
 
 .make/composer-update:
 	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} update
 	@touch .make/composer-update
 
 .PHONY: composer-install
-composer-update: .make/build-image .make/composer-install
+composer-update: .make/pull-image .make/composer-install
 
 .make/composer-install:
 	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} install
 	@touch .make/composer-install
 
 .PHONY: check-platform-reqs
-check-platform-reqs: .make/build-image .make/composer-update .make/check-platform-reqs
+check-platform-reqs: .make/pull-image .make/composer-update .make/check-platform-reqs
 
 .make/check-platform-reqs:
 	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} check-platform-reqs
 	@touch .make/check-platform-reqs
 
 .PHONY: test
-test: .make/build-image .make/composer-install .make/check-platform-reqs
+test: .make/pull-image .make/composer-install .make/check-platform-reqs
 	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} vendor/bin/phpunit tests
 
 .PHONY: clean
