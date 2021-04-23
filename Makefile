@@ -8,15 +8,16 @@ GIT_TAG:=$(shell git describe --tags --always)
 help:
 	@echo "IDC Migration PHP module supported make targets are:"
 	@echo "  build-image: builds the Docker image used for tests, and updates the TEST_IMAGE_TAG in .env"
-	@echo "  push-image: pushes the Docker image to GHCR"
+	@echo "  push-image: pushes the Docker image created by the 'build-image' target to GHCR"
 	@echo "  pull-image: pulls the Docker image tagged in .env"
 	@echo "  composer-install: installs the dependencies in composer.lock"
 	@echo "  composer-update: updates the dependencies in composer.lock per composer.json version requirements"
 	@echo "  check-platform-reqs: insures the PHP version and installed extensions are runtime compatible"
-	@echo "  test: executes unit tests"
+	@echo "  test: executes unit tests in a docker container"
 	@echo "  clean: removes build state from '.make/', the Docker image used for tests, the 'vendor' directory, composer.lock, and reverts .env"
 	@echo "  echo-image-tag: displays the current value for TEST_IMAGE_TAG from .env"
 	@echo "  echo-git-tag: displays the calculated value for GIT_TAG, based on 'git describe'"
+	@echo "  update-lock-hash: updates the hash of composer.lock"
 
 .PHONY: build-image
 build-image: .make/build-image
@@ -88,3 +89,7 @@ echo-git-tag:
 .PHONY: echo-image-tag
 echo-image-tag:
 	@echo ${TEST_IMAGE_TAG}
+
+.PHONY: update-lock-hash
+update-lock-hash:
+	-@docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} update --lock
