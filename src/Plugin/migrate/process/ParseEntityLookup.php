@@ -80,6 +80,11 @@ class ParseEntityLookup extends ProcessPluginBase implements ContainerFactoryPlu
     private const default_delimiter = ':';
 
     /**
+     * The id of the 'entity_lookup' plugin
+     */
+    private const entity_lookup_id = 'entity_lookup';
+
+    /**
      * Maps RFC 3986 reserved characters to their percent-encoded equivalent
      */
     private const reserved_char_map = [
@@ -125,25 +130,25 @@ class ParseEntityLookup extends ProcessPluginBase implements ContainerFactoryPlu
     public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
         $delimiter = $this->configuration['delimiter'] ?: self::default_delimiter;
 
-        // split the fields in the value into an array using the defined delimiter
-        $split_values = explode($delimiter, $value);
+        // split the source value into fields using the defined delimiter
+        $source_values = explode($delimiter, $value);
 
         // unescape the fields in case they contain the separator, and trim any whitespace
-        foreach ($split_values as &$unescaped_value) {
+        foreach ($source_values as &$unescaped_value) {
             $unescaped_value = trim($this->decode($delimiter, $unescaped_value));
         }
 
-        // transform the values from the spreadsheet to an `entity_lookup` config and supply the default values.
+        // transform the source values from the spreadsheet to an `entity_lookup` config and supply the default values.
         $entity_lookup_configuration = $this->applyDefaults(
-            $this->toEntityLookupConfig($split_values), $this->configuration['defaults']);
+            $this->toEntityLookupConfig($source_values), $this->configuration['defaults']);
 
         // create an instance of the entity_lookup plugin using the configuration supplied by the migration
-        $entity_lookup_plugindef = $this->migration_plugin_manager->getDefinitions()['entity_lookup'];
-        $entity_lookup_plugin = $this->migration_plugin_manager->createInstance($entity_lookup_plugindef['id'],
+        $entity_lookup_plugin = $this->migration_plugin_manager->createInstance(self::entity_lookup_id,
             $entity_lookup_configuration, $this->migration);
 
         // invoke the entity_lookup plugin with the last portion of the original value, and return
-        return $entity_lookup_plugin->transform($split_values[3], $migrate_executable, $row, $destination_property);
+        $entity_ref = $entity_lookup_plugin->transform($source_values[3], $migrate_executable, $row, $destination_property);
+        return $entity_ref;
     }
 
     /**
