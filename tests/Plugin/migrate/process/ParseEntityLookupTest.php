@@ -303,19 +303,6 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         // parse_entity_lookup plugin.
         $source_value = ":subject:name:History";
 
-        // Mocks MigratePluginManager::getDefinitions.
-        // Used to look up the entity_lookup plugin definition.
-        $getDefinitionsInvoked = false;
-        $this->mockPluginMgr->expects($this->any())
-            ->method('getDefinitions')
-            ->willReturnCallback(function () use (&$getDefinitionsInvoked) {
-                // TODO consider using Prophecy for verifying expectations
-                $getDefinitionsInvoked = true;
-                return [
-                    'entity_lookup' => self::$entity_lookup_plugindef
-                ];
-            });
-
         // Entity Lookup plugin instance that will be returned by MigratePluginManager::createInstance(...)
         $entity_lookup_plugin = $this->mockEntityLookupPlugin;
 
@@ -360,7 +347,6 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         self::assertEquals("1234", $result);
 
         // verify mocks (TODO: consider using Prophecy for mock verification)
-        self::assertTrue($getDefinitionsInvoked);
         self::assertTrue($createInstanceInvoked);
         self::assertTrue($transformInvoked);
     }
