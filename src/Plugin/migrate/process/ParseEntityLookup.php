@@ -67,7 +67,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\migrate\Plugin\MigrateProcessInterface
  * @MigrateProcessPlugin(
  *   id = "parse_entity_lookup",
- *   handle_multiples = TRUE
+ *   handle_multiples = FALSE
  * )
  */
 class ParseEntityLookup extends ProcessPluginBase implements ContainerFactoryPluginInterface {
