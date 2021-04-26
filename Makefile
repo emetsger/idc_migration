@@ -14,7 +14,7 @@ help:
 	@echo "  composer-update: updates the dependencies in composer.lock per composer.json version requirements"
 	@echo "  check-platform-reqs: insures the PHP version and installed extensions are runtime compatible"
 	@echo "  test: executes unit tests in a docker container"
-	@echo "  clean: removes build state from '.make/', the Docker image used for tests, the 'vendor' directory, composer.lock, and reverts .env"
+	@echo "  clean: removes build state from '.make/', the 'vendor' directory, composer.lock, and reverts .env"
 	@echo "  echo-image-tag: displays the current value for TEST_IMAGE_TAG from .env"
 	@echo "  echo-git-tag: displays the calculated value for GIT_TAG, based on 'git describe'"
 	@echo "  update-lock-hash: updates the hash of composer.lock"
@@ -70,8 +70,6 @@ test: .make/pull-image .make/composer-install .make/check-platform-reqs
 
 .PHONY: clean
 clean:
-	@echo "Removing image ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG}"
-	-@docker rmi ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG}
 	@echo "Removing make state from ./.make"
 	-@rm -f .make/*
 	@echo "Removing vendored source"
