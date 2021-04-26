@@ -18,12 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * This plugin will parse a string with the following form, assuming the `delimiter` configuration parameter is equal to
  * the colon character:<br><br>
- *   `<entity_type>:<bundle_key>:<bundle_name>:<value_key>:<value>`<br><br>
- * For example, `taxonomy_term:vid:subject:name:History`.  The form of the string provides an unambiguous reference that
+ *   `<entity_type>:<bundle_name>:<value_key>:<value>`<br><br>
+ * For example, `taxonomy_term:subject:name:History`.  The form of the string provides an unambiguous reference that
  * can be used to configure and invoke the `entity_lookup` plugin.<br><br>
  *
  * When a default value is provided by the `defaults` configuration key, it may be elided from the string being
- * processed.  For example, given the defaults:
+ * processed (note that `bundle_key` _must_ be supplied by `defaults` if the key is necessary for the lookup).  For
+ * example, given the defaults:
  *
  * ```
  *     defaults:
@@ -32,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *      value_key: name
  * ```
  *
- * The above example could be written as: `::subject::History`.<br><br>
+ * The above example could be written as: `:subject::History`.<br><br>
  *
  * If a value is elided from the string and there is no default provided by the plugin configuration, then the value
  * will not be passed to the `entity_lookup` plugin.  This may be the case when an entity does not have a bundle (e.g.
@@ -42,13 +43,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * the `delimiter` configuration key documented below.  Delimiters may be longer than a single character, but they
  * _must_ be latin-1 characters.  If a delimiter appears as a value in the string being processed (i.e. it is not meant
  * to be parsed as a delimiter), then it must be "percent-encoded".  For example, if the value being processed by this
- * plugin is: `node:nid:islandora_object:title:The Story of My Life: An Autobiography`, the colon between "Life" and
- * "An Autobiography" must be percent encoded as: `node:nid:islandora_object:title:The Story of My Life%3A An Autobiography`.
+ * plugin is: `node:islandora_object:title:The Story of My Life: An Autobiography`, the colon between "Life" and
+ * "An Autobiography" must be percent encoded as: `node:islandora_object:title:The Story of My Life%3A An Autobiography`.
  * If encoding the colon is not desirable, a different delimiter may be configured.<br><br>
  *
  * Available configuration keys:
  *
- * * `defaults`: an associative array of default values used to parameterize the `entity_lookup` plugin when elided from the source string.  Possible values include any keys supported by the `entity_lookup` plugin.
+ * * `defaults`: an associative array of default values used to parameterize the `entity_lookup` plugin when elided from the source string.  The `bundle_key` must be supplied by `defaults` if it is necessary for the lookup to succeed.  Possible values include any keys supported by the `entity_lookup` plugin.
  * * `delimiter`: the character string used to delimit the fields of the source string; it must be from the basic latin character set.
  *
  * Example:
