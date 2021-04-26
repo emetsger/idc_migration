@@ -40,33 +40,33 @@ push-image: .make/push-image
 pull-image: .make/pull-image
 
 .make/pull-image:
-	docker pull ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG}
+	source .env && docker pull ${DOCKER_REGISTRY}/${IMAGE_NAME}:$${TEST_IMAGE_TAG}
 	@touch .make/pull-image
 
 .PHONY: composer-update
 composer-update: .make/pull-image .make/composer-update
 
 .make/composer-update:
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} update
+	source .env && docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:$${TEST_IMAGE_TAG} update
 	@touch .make/composer-update
 
 .PHONY: composer-install
 composer-install: .make/pull-image .make/composer-install
 
 .make/composer-install:
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} install
+	source .env && docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:$${TEST_IMAGE_TAG} install
 	@touch .make/composer-install
 
 .PHONY: check-platform-reqs
 check-platform-reqs: .make/pull-image .make/composer-update .make/check-platform-reqs
 
 .make/check-platform-reqs:
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} check-platform-reqs
+	source .env && docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:$${TEST_IMAGE_TAG} check-platform-reqs
 	@touch .make/check-platform-reqs
 
 .PHONY: test
 test: .make/pull-image .make/composer-install .make/check-platform-reqs
-	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} vendor/bin/phpunit tests
+	source .env && docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:$${TEST_IMAGE_TAG} vendor/bin/phpunit tests
 
 .PHONY: clean
 clean:
@@ -85,8 +85,8 @@ echo-git-tag:
 
 .PHONY: echo-image-tag
 echo-image-tag:
-	@echo ${TEST_IMAGE_TAG}
+	@source .env && echo $${TEST_IMAGE_TAG}
 
 .PHONY: update-lock-hash
 update-lock-hash:
-	-@docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} update --lock
+	-source .env && @docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:$${TEST_IMAGE_TAG} update --lock
