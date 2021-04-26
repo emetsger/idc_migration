@@ -3,6 +3,7 @@
 namespace Drupal\idc_migration\Plugin\migrate\process;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\Plugin\MigratePluginManager;
 use Drupal\migrate\Plugin\MigrationInterface;
@@ -351,5 +352,51 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         self::assertTrue($transformInvoked);
     }
 
+    public function testTransformInvalidSourceValueTooSmall() {
+        // The source value from the spreadsheet in the form:
+        //   <entity type>:<bundle>:<value_key>:<value>
+        // Purposefully made too small here.
+        $source_value = "subject:name:History";
+
+        try {
+            $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+            self::fail("Expected transform() to throw a MigrateException");
+        } catch (MigrateException $e) {
+            self::assertTrue(str_contains($e->getMessage(), $source_value));
+            self::assertTrue(str_contains($e->getMessage(), ParseEntityLookup::expected_source_arraysize));
+            self::assertTrue(str_contains($e->getMessage(), sizeof(explode(':', $source_value))));
+        }
+    }
+
+    public function testTransformInvalidSourceValueTooBig() {
+        // The source value from the spreadsheet in the form:
+        //   <entity type>:<bundle>:<value_key>:<value>
+        // Purposefully made too big here.
+        $source_value = "::subject:name:History";
+
+        try {
+            $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+            self::fail("Expected transform() to throw a MigrateException");
+        } catch (MigrateException $e) {
+            self::assertTrue(str_contains($e->getMessage(), $source_value));
+            self::assertTrue(str_contains($e->getMessage(), ParseEntityLookup::expected_source_arraysize));
+            self::assertTrue(str_contains($e->getMessage(), sizeof(explode(':', $source_value))));
+        }
+    }
+
+    public function testTransformInvalidSourceValueEmptyLastElement() {
+        // The source value from the spreadsheet in the form:
+        //   <entity type>:<bundle>:<value_key>:<value>
+        // Purposefully empty last element.
+        $source_value = "taxonomy_term:subject:name:";
+
+        try {
+            $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+            self::fail("Expected transform() to throw a MigrateException");
+        } catch (MigrateException $e) {
+            self::assertTrue(str_contains($e->getMessage(), $source_value));
+            self::assertTrue(str_contains($e->getMessage(), "must not be empty"));
+        }
+    }
 
 }

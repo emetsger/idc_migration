@@ -5,6 +5,7 @@ namespace Drupal\idc_migration\Plugin\migrate\process;
 
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -86,6 +87,11 @@ class ParseEntityLookup extends ProcessPluginBase implements ContainerFactoryPlu
     private const entity_lookup_id = 'entity_lookup';
 
     /**
+     * The expected size of a source value, after being exploded to an array using the delimiter
+     */
+    const expected_source_arraysize = 4;
+
+    /**
      * Maps RFC 3986 reserved characters to their percent-encoded equivalent
      */
     private const reserved_char_map = [
@@ -133,6 +139,15 @@ class ParseEntityLookup extends ProcessPluginBase implements ContainerFactoryPlu
 
         // split the source value into fields using the defined delimiter
         $source_values = explode($delimiter, $value);
+
+        // The source value must be exploded into an array of 4 elements, and the last element must have a value
+        if (self::expected_source_arraysize != sizeof($source_values)) {
+            throw new MigrateException(sprintf("Unexpected number of elements (%d) found in source value '%s', expected %d", sizeof($source_values), $value, self::expected_source_arraysize));
+        }
+
+        if (0 == strlen(trim($source_values[3]))) {
+            throw new MigrateException(sprintf("Last element of source array must not be empty.  Unable to successfully parse source value '%s'", $value));
+        }
 
         // unescape the fields in case they contain the separator, and trim any whitespace
         foreach ($source_values as &$unescaped_value) {
