@@ -18,11 +18,11 @@
   ],
   "require": {
     "php": ">=7.3",
-    "drupal/core": "8.9.13"
+    "drupal/core": "^8.9"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5",
-    "drupal/migrate_plus": "5.1.0"
+    "drupal/migrate_plus": "^5.1"
   },
   "config": {
     "platform": {
