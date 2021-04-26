@@ -51,7 +51,7 @@ composer-update: .make/pull-image .make/composer-update
 	@touch .make/composer-update
 
 .PHONY: composer-install
-composer-update: .make/pull-image .make/composer-install
+composer-install: .make/pull-image .make/composer-install
 
 .make/composer-install:
 	docker run --rm -v $$PWD:/app ${DOCKER_REGISTRY}/${IMAGE_NAME}:${TEST_IMAGE_TAG} install
