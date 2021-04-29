@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * This plugin will parse a string with the following form, assuming the `delimiter` configuration parameter is equal to
  * the colon character:<br><br>
- *   `<entity_type>:<bundle_name>:<value_key>:<value>`<br><br>
+ *   `<entity_type>:<bundle>:<value_key>:<value>`<br><br>
  * For example, `taxonomy_term:subject:name:History`.  The form of the string provides an unambiguous reference that
  * can be used to configure and invoke the `entity_lookup` plugin.<br><br>
  *
@@ -62,7 +62,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     defaults:
  *      entity_type: taxonomy_term
  *      bundle_key: vid
- *      bundle_name: subject
+ *      bundle: subject
  *      value_key: name
  * ```
  *
