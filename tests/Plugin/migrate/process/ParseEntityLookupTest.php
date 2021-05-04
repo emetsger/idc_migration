@@ -352,6 +352,9 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         self::assertTrue($transformInvoked);
     }
 
+    /**
+     * Improper formatting of the source value should result in a MigrateException
+     */
     public function testTransformInvalidSourceValueTooSmall() {
         // The source value from the spreadsheet in the form:
         //   <entity type>:<bundle>:<value_key>:<value>
@@ -368,6 +371,9 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         }
     }
 
+    /**
+     * Improper formatting of the source value should result in a MigrateException
+     */
     public function testTransformInvalidSourceValueTooBig() {
         // The source value from the spreadsheet in the form:
         //   <entity type>:<bundle>:<value_key>:<value>
@@ -384,6 +390,9 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         }
     }
 
+    /**
+     * Improper formatting of the source value should result in a MigrateException
+     */
     public function testTransformInvalidSourceValueEmptyLastElement() {
         // The source value from the spreadsheet in the form:
         //   <entity type>:<bundle>:<value_key>:<value>
@@ -399,4 +408,30 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         }
     }
 
+    /**
+     * Empty source values should result in NULL being returned.
+     */
+    public function testEmptyValue() {
+        $source_value = " ";
+        $result = $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+        self::assertNull($result);
+    }
+
+    /**
+     * Zero-length source values should result in NULL being returned.
+     */
+    public function testZeroLengthValue() {
+        $source_value = "";
+        $result = $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+        self::assertNull($result);
+    }
+
+    /**
+     * NULL source values should result in NULL being returned.
+     */
+    public function testNullValue() {
+        $source_value = NULL;
+        $result = $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+        self::assertNull($result);
+    }
 }

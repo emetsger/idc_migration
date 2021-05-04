@@ -135,6 +135,10 @@ class ParseEntityLookup extends ProcessPluginBase implements ContainerFactoryPlu
     }
 
     public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
+        if ($value == NULL || trim($value) == "") {
+            return NULL;
+        }
+
         $delimiter = $this->configuration['delimiter'] ?: self::default_delimiter;
 
         // split the source value into fields using the defined delimiter
