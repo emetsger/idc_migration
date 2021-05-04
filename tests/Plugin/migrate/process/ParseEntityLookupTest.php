@@ -399,4 +399,30 @@ class ParseEntityLookupTest extends MigrateProcessTestCase {
         }
     }
 
+    /**
+     * Empty source values should result in NULL being returned.
+     */
+    public function testEmptyValue() {
+        $source_value = " ";
+        $result = $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+        self::assertNull($result);
+    }
+
+    /**
+     * Zero-length source values should result in NULL being returned.
+     */
+    public function testZeroLengthValue() {
+        $source_value = "";
+        $result = $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+        self::assertNull($result);
+    }
+
+    /**
+     * NULL source values should result in NULL being returned.
+     */
+    public function testNullValue() {
+        $source_value = NULL;
+        $result = $this->underTest->transform($source_value, $this->mockMigrationExe, new Row(), "foo");
+        self::assertNull($result);
+    }
 }
