@@ -3,4 +3,5 @@ type: module
 description: 'Custom migration plugins supporting IDC ingest'
 core: 8.x
 dependencies:
-  - migrate
+  - drupal:migrate
+  - migrate_source_csv:migrate_source_csv

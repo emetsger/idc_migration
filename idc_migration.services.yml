@@ -1,0 +1,6 @@
+---
+services:
+  idc_defaults.route_subscriber:
+    class: Drupal\idc_migration\Routing\RouteSubscriber
+    tags:
+      - name: event_subscriber
