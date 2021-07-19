@@ -29,7 +29,7 @@ class MigrateBatchExecutable extends MigrateExecutable {
   }
 
   // The name of our timer.
-  const TIMER = 'dgi_migrate_iteration_timer';
+  const TIMER = 'idc_migrate_iteration_timer';
 
   // The max amount of time we might want to allow per iteration.
   const MAX_TIME = 3600.0;
@@ -47,7 +47,7 @@ class MigrateBatchExecutable extends MigrateExecutable {
   public function __construct(MigrationInterface $migration, MigrateMessageInterface $message, array $options = []) {
     parent::__construct($migration, $message, $options);
 
-    $queue_name = "dgi_migrate__batch_queue__{$migration->id()}";
+    $queue_name = "idc_migrate__batch_queue__{$migration->id()}";
     $this->queue = \Drupal::queue($queue_name, TRUE);
 
     if (static::isCli()) {
